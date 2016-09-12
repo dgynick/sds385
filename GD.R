@@ -1,4 +1,4 @@
-#source("/Users/dgy/Desktop/SDS385/R/GD.r");
+
 
 #data preparation
 raw<- read.csv("/Users/dgy/Desktop/SDS385/R/wdbc.csv",header=F);
