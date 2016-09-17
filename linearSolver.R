@@ -1,22 +1,21 @@
-#source("/Users/dgy/Desktop/SDS385/R/linearSolver.r")
+
 library("Matrix");
 library("microbenchmark");
-X<- Matrix(1:8,nrow=4,ncol=2)
-w<- c(1,1,1,1)
-y<- c(1,5,6,9)
 
+
+#multiply A by a diagnal vector w
 multdiag<-function(A,w){
 	for(i in 1:length(w)){
 		A[,i]=w[i]*A[,i];
 	}
 	return(A);
 }
+
+
 InversionMethod<- function(A,b){
 	temp1<- solve(A);
 	return(temp1 %*% b);
 }
-
-
 
 CholeskyMethod<- function(A,b){
 
@@ -24,6 +23,8 @@ CholeskyMethod<- function(A,b){
 	temp1<- forwardsolve(t(R),b);
 	return(backsolve(R,temp1));
 }
+
+#N is number of observations, p is the length of each observation
 Simulation <- function(N,P){
 	X<- matrix(rnorm(N*P),nrow=N);
 	y<- rnorm(N);
@@ -47,6 +48,8 @@ SparseInversionMethod<- function(A,b){
 	temp2<- solve(A);
 	return(temp2 %*% b);
 }
+
+#This turned out to work not so well even in sparse case
 SparseCholeskyMethod2<- function(A,b){
 
 	temp3<- expand(Cholesky(A));
@@ -55,8 +58,8 @@ SparseCholeskyMethod2<- function(A,b){
 	temp4<- forwardsolve(t(R),b);
 	return(backsolve(R,temp4));
 }
-SparseCholeskyMethod<- function(A,b){
 
+SparseCholeskyMethod<- function(A,b){
 	R= chol(A);
 	temp2<- forwardsolve(t(R),b);
 	return(backsolve(R,temp2));
@@ -65,7 +68,7 @@ SparseCholeskyMethod<- function(A,b){
 
 
 
-
+#s is the probability of a sparse cell in X
 SparseSimulation <- function(N,P,s){
 	X<- matrix(rnorm(N*P),nrow=N);
 	mask<- matrix(rbinom(N*P,1,s),nrow=N);
