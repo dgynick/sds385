@@ -27,48 +27,34 @@ main<- function(x,y,m,round=200,GDstep=0.01,Newtonstep=1){
 
 }
 
-
+#gradient descent
 GD<-function(x,y,m,round,step){
 	#initialize b as a vector of 1s
 	b=matrix( rep( 0,dim(x)[2] ),nrow=dim(x)[2] );
 	result.nll<-c();
 	
-	#beta=0.8; for backtracking line search
 	for(r in 1:round){
 		
 		g= gradient( x,y,b,m );
 		b= b-step*g;
 		result.nll<-c( result.nll,nll(x,y,b,m) );
 		
-		#print(g);
-		#print(nll(x,y,b,m));
-		#if(negativeL(x,y,b-g,m)> nl- step/2*sum(g*g)){
-		#	step=beta*step;
-		#}
 	}
-	#print(b);
 	return(result.nll);
 }
 
+#newton's method
 Newton<-function(x,y,m,round,step){
 	#initialize b as a vector of 1s
 	b=matrix( rep( 0,dim(x)[2] ),nrow=dim(x)[2] );
-	result.nll<-c();
-	
-	#beta=0.8; for backtracking line search
+	result.nll <- c();
+
 	for(r in 1:round){
 		
-		g= ngradient(x,y,b,m);
-		b= b-step*g;
-		result.nll<-c(result.nll,nll(x,y,b,m));
-		
-		#print(g);
-		#print(nll(x,y,b,m));
-		#if(negativeL(x,y,b-g,m)> nl- step/2*sum(g*g)){
-		#	step=beta*step;
-		#}
+		g = ngradient(x,y,b,m);
+		b = b-step*g;
+		result.nll <- c(result.nll,nll(x,y,b,m));
 	}
-	#print(b);
 	return(result.nll);
 }
 
