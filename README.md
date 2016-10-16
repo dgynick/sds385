@@ -1,7 +1,5 @@
 # sds385
 Welcome to Dongguang You's sds385 repository!
 
-For exercise 1.1 linear regression, please refer to linearSolver.r
-
-For exercise 1.2 generalized linear models, please refer to GD.r
+All the code up to exercise 5 are listed here. I will upload a pdf file on 10/16 or 10/17
 
