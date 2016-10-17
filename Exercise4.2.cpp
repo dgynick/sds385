@@ -2,8 +2,8 @@
 #include <RcppEigen.h>
 #include <math.h>
 
-#define lamda 0.000001
-#define step 0.001
+#define lamda 0.0000005
+#define step 0.0005
 #define max_iteration 1000000
 
 using namespace Rcpp;
@@ -93,6 +93,7 @@ library(Matrix)
 
 #sourceCpp("/Users/dgy/Desktop/SDS385/R/Exercise4.2.cpp")
 require(stream)
+require(microbenchmark)
 X = readRDS("/Users/dgy/Desktop/SDS385/binaryURL/url_X.rds")
 Y = readRDS("~/Desktop/SDS385/binaryURL/url_y.rds")
 X = t(X)
@@ -101,7 +102,7 @@ order <- sample.int(dim(X)[2])
 test <- order[1:2000]
 train <- order[2001:length(order)]
 
-beta = mymain(X[,train],Y[train], X[,test],Y[test])
+microbenchmark(mymain(X[,train],Y[train], X[,test],Y[test]), times = 1)
 
 
 #Xstream <- DSD_Memory(X, loop= TRUE, class = Y)

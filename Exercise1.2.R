@@ -52,7 +52,7 @@ Newton<-function(x,y,m,round,step){
 	
 	for(r in 1:round){
 		
-		g = ngradient(x,y,b,m);
+		g = solve(ngradient(x,y,b,m), gradient(x,y,b,m));
 		b = b - step * g;
 		result.nll <- c(result.nll, nll(x,y,b,m));
 		
@@ -84,8 +84,7 @@ ngradient<-function(x,y,b,m){
 	temp <- exp(-x %*% b);#temp is a vector
 	d <- diag( c( m* temp/(1+temp)^2 ) ); 
 	hessian <- t(x) %*% d %*% x;
-	g <- solve(hessian,gradient(x,y,b,m));
-	return(g);
+	return(hessian);
 	
 }
 

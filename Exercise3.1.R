@@ -22,10 +22,10 @@ main<- function(x,y,m,beta,round = 2000, c = 0.8, p = 0.8, initialStep = 1, batc
 	#plotBetaVSBetahat(beta,SGDResult$betahat);
 	
 	p.x <- c(1:round);#x coordinates in the plot
+	jpeg("~/Desktop/backtrackingSGD.jpg")
 	plot(p.x,SGDResult1$nll1, col="red", xlab="round", ylab="negative log likelihood", main = "green:SGD with stepsize 0.01, red:backtrackingSGD");
-
 	lines(p.x, SGDResult2$nll1, col="green");
-
+	dev.off()
 }
 
 plotBetaVSBetahat <- function(beta,betahat){

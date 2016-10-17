@@ -1,9 +1,7 @@
 #source("/Users/dgy/Desktop/SDS385/R/Exercise1.1.r")
 library("Matrix");
 library("microbenchmark");
-X<- Matrix(1:8,nrow=4,ncol=2)
-w<- c(1,1,1,1)
-y<- c(1,5,6,9)
+
 
 
 InversionMethod<- function(A,b){

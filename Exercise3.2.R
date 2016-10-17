@@ -17,11 +17,18 @@ main<- function(x, y, m, beta, round = 2000, weight = 0.5){
 	SGDResult1 <- SGDBacktracking(x, y, m, round, c = 0.8, p = 0.8, initialStep = 1, batchsize = 1, weight);
 	SGDResult2 <- QNewton(x, y, m, round, c = 0.8, p = 0.8, initialStep = 1, weight);
 	SGDResult3 <- Newton(x, y, m, round, weight);
+	jpeg("~/Desktop/Newton.jpg")
+	#p.x <- c(1:round);#x coordinates in the plot
+	#plot(p.x,SGDResult1$nll1, col="red", xlab="round", ylab="negative log likelihood", main = "red: SGD, green: Quasi-Newton, blue: Newton");
+	#lines(p.x, SGDResult2$nll1, col="green");
+	#lines(p.x, SGDResult3$nll1, col="blue");
+	#dev.off()
 	
+	jpeg("~/Desktop/Newton1.jpg")
 	p.x <- c(1:round);#x coordinates in the plot
-	plot(p.x,SGDResult1$nll1, col="red", xlab="round", ylab="negative log likelihood", main = "red: SGD, green: Quasi-Newton, blue: Newton");
-	lines(p.x, SGDResult2$nll1, col="green");
+	plot(p.x,SGDResult2$nll1, col="green", xlab="round", ylab="negative log likelihood", main = "green: Quasi-Newton, blue: Newton");
 	lines(p.x, SGDResult3$nll1, col="blue");
+	dev.off()
 }
 
 #compute negative log likelihood, b is beta, x is a N by P matrix, y and m are N by 1 matrices
