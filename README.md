@@ -1,5 +1,5 @@
 # sds385
 Welcome to Dongguang You's sds385 repository!
 
-All the code up to exercise 5 are listed here. I will upload a pdf file on 10/16 or 10/17
+All the code up to exercise 5 are listed here. Summary2 is a summary of my work in exercises 2-4.
 
