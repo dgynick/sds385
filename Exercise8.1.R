@@ -29,7 +29,8 @@ Y = c(Y)
 
 
 lambda = 0.1
-A = lambda * L + diag(nrow(L))
+A = lambda * L
+diag(A) = 1 + diag(A)
 b = Y
 
 
@@ -37,20 +38,28 @@ main <- function(){
 
 	print(microbenchmark((result1 = CholeskyMethod(A,b)), times = 1))
 	print(microbenchmark((result2 = CG(A,b)), times = 1))
-	plot(result1$x, result2$finalx, col = "red", main="Conjugate gradient against cholesky, yellow: after 2 iteration, blue: after 3, red:after 6")
-	points(result1$x, result2$finalx,col="red")
-	points(result1$x, result2$x[,2],col="yellow")
-	points(result1$x, result2$x[,3],col="green")
+	print(microbenchmark((result3 = solve(A,b)), times = 1))
+	#plot(result1$x, result2$finalx, col = "red", main="Conjugate gradient against cholesky")
+	plot(result3, result2$finalx, col = "red", main="Conjugate gradient against solve")
 
+}
+
+test <-function(){
+	#for test only
+	A = matrix(c(3,4,6,4,6,9,6,9,14), nrow=3)
+	b = c(1,2,3)
+	
+	print(microbenchmark((result1 = CholeskyMethod(A,b)), times = 1))
+	print(microbenchmark((result2 = CG(A,b)), times = 1))
+	print(microbenchmark((result3 = solve(A,b)), times = 1))
+	#plot(result1$x, result2$finalx, col = "red", main="Conjugate gradient against cholesky")
+	plot(result3, result2$finalx, col = "red", main="Conjugate gradient against solve")
 }
 
 #to be tested
 plotHeatMap <- function(){
-	#A = lambda * L + diag(nrow(L))
-	#b = Y
-	
-	result2 = CG(A,b)
-	image(matrix(result2$finalx, nrow = m))
+	result1 = CG(A,b)
+	image(matrix(result1$finalx, nrow = m))
 }
 
 
@@ -65,19 +74,7 @@ CholeskyMethod<- function(A,b){
 }
 
 
-test <-function(){
-	#for test only
-	A = matrix(c(3,4,6,4,6,9,6,9,14), nrow=3)
-	b = c(1,2,3)
-	
-	print(microbenchmark((result1 = CholeskyMethod(A,b)), times = 1))
-	print(microbenchmark((result2 = CG(A,b)), times = 1))
-	plot(result1$x, result2$finalx, col = "red", main="Conjugate gradient against cholesky, yellow: after 2 iteration, blue: after 3, red:after 6")
-	points(result1$x, result2$finalx,col="red")
-	points(result1$x, result2$x[,2],col="yellow")
-	points(result1$x, result2$x[,3],col="green")
-	
-}
+
 
 #conjugate gradient without preconditioning
 CG <- function(A,b){
@@ -90,13 +87,12 @@ CG <- function(A,b){
 	#the descent direction
 	prevp = -prevr
 	
-	result$x = matrix(prevx, ncol = 1)
 	crossprodprevr = crossprod(prevr)
 	
 	objectives = vector()
 	
-	for(iteration in 1:5){
-		aprevp = A %*% prevp
+	for(iteration in 1:100){
+		aprevp = crossprod(A, prevp)
 		
 		#step size
 		alpha = as.numeric(crossprodprevr/crossprod(prevp, aprevp))
@@ -115,7 +111,6 @@ CG <- function(A,b){
         prevx = x
         crossprodprevr = crossprodr
         
-        result$x = cbind(result$x, x)
 	    #objectives = c(objectives, as.numeric(crossprod(A %*% x - b)))
 	}
 	#result$objectives = objectives

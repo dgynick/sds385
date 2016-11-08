@@ -23,7 +23,6 @@ m = nrow(Y)
 n = ncol(Y)
 
 D = makeD2_sparse(m, n)
-L = crossprod(D)
 
 Y = c(Y)
 
@@ -33,13 +32,13 @@ objective <- function(x, Y, lambda, D){
 
 
 main <- function(){
-	microbenchmark(result1 = ADMM(0.1, 100))
+	microbenchmark(result1 = ADMM(0.1, 10000), times = 1)
 	#plot(1:length(result1$objectives), result1$objectives)
-	img1(result1$x)
+	image(result1$x)
 }
 
 
-ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
+ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001, dynamicRho = TRUE){
 
 	rho = 0.1
 	
@@ -58,12 +57,15 @@ ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
 		return(((length(Y) + nrow(D)) ^ 0.5) * absThr + relThr * (as.numeric(crossprod(c(u, t) * rho)) ^ 0.5))
 	}
 	
-	#prechache factorization
-	R = chol(diag(ncol(D)) + L)
 	
+	temp = crossprod(D)
+	diag(temp) = diag(temp) + 1
+	
+	#prechache factorization
+	#R = chol(temp)
 	
 	result = list("converged" = FALSE)
-	#objectives = vector()
+	objectives = vector()
 	
 	for(iteration in 1: max_iteration){
 		
@@ -74,15 +76,19 @@ ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
 		r = sign(prevs - prevt) * pmax(abs(prevs - prevt) - lambda/rho, 0)
 		
 		#update v and s
-		temp1 = forwardsolve(t(R), x + prevu + as.vector(crossprod(D, r + prevt)))
-		v = backsolve(R, temp1)
+
+		#the code when using cholesky decomposition
+		#temp1 = forwardsolve(t(R), x + prevu + as.vector(crossprod(D, r + prevt)))
+		#v = backsolve(R, temp1)
+		
+		v = as.vector(solve(temp, x + prevu + as.vector(crossprod(D, r + prevt))))
 		s = as.vector(D %*% v)
 		
 		#update u and t
 		u = prevu + x - v
 		t = prevt + r - s 
 		
-		#objectives = c(objectives, objective(x, Y, lambda, D))
+		objectives = c(objectives, objective(x, Y, lambda, D))
 		
 		#check convergence
 		primalRes = as.numeric(crossprod(c(x - v, r - s)) ^ 0.5)
@@ -97,7 +103,7 @@ ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
 		
 		
 		#rho change, recompute factorization, rescale u
-		if(TRUE){
+		if(dynamicRho){
 			if(primalRes > 5 * dualRes){
 				
 				#print("increasing rho at iteration")
@@ -126,6 +132,6 @@ ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
 		
 	}
 	result$x = x
-	#result$objectives = objectives
+	result$objectives = objectives
 	return(result)
 }

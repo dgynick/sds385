@@ -16,9 +16,8 @@ objective <- function(X, beta, Y, lambda){
 	return(crossprod(Y - X %*% beta)/2/nrow(X) + lambda * sum(abs(beta)))
 }
 
-ADMM <- function(X,Y,lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
-	X = scale(X)
-	Y = scale(Y)
+ADMM <- function(X,Y,lambda, max_iteration, absThr = 0.0001, relThr = 0.0001, dynamicRho = TRUE){
+
 	
 	n = nrow(X)
 	p = ncol(X)
@@ -75,7 +74,7 @@ ADMM <- function(X,Y,lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
 		
 		
 		#rho change, recompute factorization, rescale u
-		if(TRUE){
+		if(dynamicRho){
 			if(primalRes > 10 * dualRes){
 				
 				#print("increasing rho at iteration")
@@ -109,6 +108,9 @@ ADMM <- function(X,Y,lambda, max_iteration, absThr = 0.0001, relThr = 0.0001){
 }
 
 compareConvergence<- function(lambda){
+	X = scale(X)
+	Y = scale(Y)
+	
 	source("/Users/dgy/Desktop/SDS385/R/Exercise6.r")
 	result = ADMM(X,Y,lambda,30000)
 	result1 = proximalG(X,Y,0.001, lambda, result$iterations)
@@ -119,10 +121,11 @@ compareConvergence<- function(lambda){
 }
 
 compareBeta<-  function(lambda){
-	result = ADMM(X,Y,lambda,100000)
-	library(glmnet)
 	X = scale(X)
 	Y = scale(Y)
+	
+	result = ADMM(X,Y,lambda,100000)
+	library(glmnet)
 	fit = glmnet(X,Y, lambda = c(lambda), intercept = FALSE, alpha = 1)
 	plot(fit$beta, result$beta)
 }
