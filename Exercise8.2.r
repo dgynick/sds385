@@ -1,4 +1,4 @@
-#source("/Users/dgy/Desktop/SDS385/R/Exercise8.2.r")
+#source("/Users/gy/Desktop/SDS385/R/Exercise8.2.r")
 require("Matrix")
 require(microbenchmark)
 
@@ -32,9 +32,9 @@ objective <- function(x, Y, lambda, D){
 
 
 main <- function(){
-	microbenchmark(result1 = ADMM(0.1, 10000), times = 1)
-	#plot(1:length(result1$objectives), result1$objectives)
-	image(result1$x)
+	microbenchmark(result1 = ADMM(0.01, 10000), times = 1)
+	plot(1:length(result1$objectives), result1$objectives)
+	image(matrix(result1$x, nrow = m))
 }
 
 
@@ -77,7 +77,7 @@ ADMM <- function(lambda, max_iteration, absThr = 0.0001, relThr = 0.0001, dynami
 		
 		#update v and s
 
-		#the code when using cholesky decomposition
+		#using cholesky decomposition
 		#temp1 = forwardsolve(t(R), x + prevu + as.vector(crossprod(D, r + prevt)))
 		#v = backsolve(R, temp1)
 		
